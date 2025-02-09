@@ -1,137 +1,272 @@
-# ZimEasyPay
+# ZimEasyPay - Digital Remittance Service
 
-ZimEasyPay is a cutting-edge remittance platform designed to provide fast, secure, and affordable cross-border payments. Leveraging Web3 technology, Interledger's API, and TigerBeetle for high-performance transactions, ZimEasyPay enables instant money transfers with transparent fees and real-time tracking.
-
----
-
-## Features
-
-- **Instant Cross-Border Transfers**: Near-instant transactions across borders, reducing transfer times from days to seconds.
-- **Transparent Fees**: Clear, upfront breakdown of all fees and exchange rates before each transaction.
-- **Real-Time Tracking**: Track transactions from initiation to completion with real-time status updates.
-- **Real-Time Currency Covertion**: Automatically converts currencies at accurate, real-time rates, ensuring fair value for both the sender and the recipient.
-- **Fee-Free Small Transfers**: A zero-free model for mico-transfers, making the platform accessibleeven to lower-income workers sending smaller amounts.
-- **Offline Cash-Out**: Access funds even in unbanked or rural areas through local agents.
-
----
-
-## Tech Stack
-
-- **Web3**: Single sign-on for secure and decentralized login.
-- **Interledger**: Cross-border payment routing and settlement.
-- **TigerBeetle**: High-performance database for financial transactions.
-- **TypeScript**: For building scalable and maintainable code.
-- **AWS**: Cloud infrastructure and storage with S3.
-- **Figma**: For designing platform UI/UX.
-- **GitHub Actions**: CI/CD automation for testing and deployment.
-
----
+ZimEasyPay is a digital remittance platform that allows users to send money from PayPal to local mobile operators like EcoCash and MoMo in Zimbabwe. This repository contains the complete system, including the frontend (built with Flutter) and backend (built with NestJS).
 
 ## Table of Contents
 
-1. [Installation](#installation)
-2. [Usage](#usage)
-3. [Deployment](#deployment)
+- [Project Overview](#project-overview)
+- [Frontend Setup](#frontend-setup)
+- [Backend Setup](#backend-setup)
+  - [API Documentation](#api-documentation)
+- [Testing](#testing)
+  - [Manual Testing](#manual-testing)
+  - [Automated Testing](#automated-testing)
+- [License](#license)
+
+## Project Overview
+
+ZimEasyPay enables users to:
+
+- Send money from PayPal to local mobile wallets (EcoCash, MoMo).
+- Track transfers in real-time.
+- Manage user accounts, balances, and transfer history.
+
+### Components
+
+1. **Frontend**: Built with **Flutter** for mobile apps.
+2. **Backend**: Built with **NestJS**, handling authentication, user management, and transaction services.
+3. **Database**: MongoDB (or your chosen database).
+4. **Payment Integration**: Integrates PayPal API for payments.
 
 ---
 
-## Installation
+## Frontend Setup (Flutter)
 
-1. **Clone the repository**:
+### Prerequisites
 
-   ```bash
-   git clone https://github.com/ZimEasyPay/zep.git
-   ```
+- **Flutter**: v3.0 or higher.
+- **Android Studio** / **VS Code** with Flutter and Dart plugins installed.
 
-2. **Navigate to the project directory**:
+### Installation
 
-   ```bash
-   cd zep
-   ```
+Clone the repository:
 
-3. **Install dependencies**:
+```bash
+git clone [ZimEasyPay](https://github.com/ZimEasyPay/zep.git)
+cd Zep
+```
 
-   ```bash
-   npm install
-   ```
+Install dependencies:
 
-4. **Set up environment variables**: Create a `.env` file in the root directory with the following variables:
-   ```bash
-   WEB3_PROVIDER=<your-web3-provider-url>
-   AWS_ACCESS_KEY_ID=<your-aws-access-key>
-   AWS_SECRET_ACCESS_KEY=<your-aws-secret-key>
-   INTERLEDGER_API_KEY=<your-interledger-api-key>
-   ```
+```bash
+flutter pub get
+```
 
----
+### Configuration
 
-## Usage
+Create a `.env` file in the root of the Flutter project and add your environment variables (e.g., API URLs, credentials).
 
-1. **Run the application locally**:
+Example:
 
-   ```bash
-   npm start
-   ```
+```
+API_URL=http://localhost:3000/api/v1
+```
 
-   This will start the application on `http://localhost:3000`.
+### Running the Frontend
 
-2. **Web3 Single Sign-On**: To test the Web3 login, connect your wallet (e.g., MetaMask) via the browser extension.
+To run the Flutter app:
 
-3. **Send a Payment**:
-   - Go to the "Send Money" page, enter the amount, currency, and recipient details, and click **Send**.
-   - The platform will calculate the fees and conversion rates in real-time.
-   - You can track the transaction status on the "Transactions" page.
+```bash
+flutter run
+```
 
 ---
 
-## Running Tests
+## Backend Setup (NestJS)
 
-Run the automated tests to ensure the codebase is functioning properly.
+### Prerequisites
 
-1. **Run Unit Tests**:
+- **Node.js**: v16+ or higher.
+- **npm**: v7+.
+- **MongoDB** (or preferred database).
 
-   ```bash
-   npm test
-   ```
+### Installation
 
-2. **End-to-End Tests** (if applicable):
-   Add scripts to perform e2e tests for full flow coverage.
+Clone the repository:
+
+```bash
+git clone https://github.com/ZimEasyPay/-api.git
+cd Zep-api
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Configuration
+
+Create a `.env` file in the root directory of the NestJS project and configure environment variables:
+
+```
+PORT=3000
+DB_URI=mongodb://localhost:27017/ZimEasyPay
+JWT_SECRET=your_secret_key
+PAYPAL_CLIENT_ID=your_paypal_client_id
+```
+
+### Running the Backend
+
+To run the backend server:
+
+```bash
+npm run start
+```
+
+The backend API will be available at `http://localhost:3000`.
 
 ---
 
-## Deployment
+## API Documentation
 
-Follow these steps to deploy **ZimEasyPay** to AWS (or your preferred cloud provider).
+### POST /api/v1/transfer
 
-1. **Ensure you have an AWS account** and have configured your credentials locally.
-2. **Create a `deploy.sh` script** to handle the deployment of your app to an EC2 instance or other hosting platform.
-3. **Set up the GitHub Actions workflow** to automatically deploy on every push to the `main` branch.
+**Description**: Create a new transfer request.
+
+- **Request Body**:
+  ```json
+  {
+    "amount": 100,
+    "paymentMethod": "bank",
+    "deliveryMethod": "mobile-wallet"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "id": "unique_transfer_id",
+    "amount": 100,
+    "paymentMethod": "bank",
+    "deliveryMethod": "mobile-wallet",
+    "status": "pending"
+  }
+  ```
+
+### GET /api/v1/transfer/{id}
+
+**Description**: Retrieve a transfer by its ID.
+
+- **URL Params**:
+  - `id` (required): The unique transfer ID.
+- **Response**:
+  ```json
+  {
+    "id": "unique_transfer_id",
+    "amount": 100,
+    "paymentMethod": "bank",
+    "deliveryMethod": "mobile-wallet",
+    "status": "pending"
+  }
+  ```
+
+### PUT /api/v1/transfer/{id}
+
+**Description**: Update a transfer by its ID.
+
+- **URL Params**:
+
+  - `id` (required): The unique transfer ID.
+
+- **Request Body**:
+
+  ```json
+  {
+    "amount": 150,
+    "paymentMethod": "mobile-wallet",
+    "deliveryMethod": "bank"
+  }
+  ```
+
+- **Response**:
+  ```json
+  {
+    "id": "unique_transfer_id",
+    "amount": 150,
+    "paymentMethod": "mobile-wallet",
+    "deliveryMethod": "bank",
+    "status": "updated"
+  }
+  ```
+
+### DELETE /api/v1/transfer/{id}
+
+**Description**: Delete a transfer by its ID.
+
+- **URL Params**:
+
+  - `id` (required): The unique transfer ID.
+
+- **Response**:
+  ```json
+  {
+    "message": "Transfer deleted successfully"
+  }
+  ```
 
 ---
 
-## Contributing
+## Testing
 
-We welcome contributions to ZimEasyPay! Here's how you can contribute:
+### Manual Testing
 
-1. **Fork the repository**.
-2. **Create a new branch** for your feature or bug fix:
+You can test the API manually using tools like **Postman** or **Insomnia**.
+
+#### POST Request (Create Transfer)
+
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/v1/transfer`
+- **Body**:
+  ```json
+  {
+    "amount": 100,
+    "paymentMethod": "bank",
+    "deliveryMethod": "mobile-wallet"
+  }
+  ```
+
+#### GET Request (Retrieve Transfer by ID)
+
+- **Method**: `GET`
+- **URL**: `http://localhost:3000/api/v1/transfer/{id}`
+
+#### PUT Request (Update Transfer)
+
+- **Method**: `PUT`
+- **URL**: `http://localhost:3000/api/v1/transfer/{id}`
+- **Body**:
+  ```json
+  {
+    "amount": 150,
+    "paymentMethod": "mobile-wallet",
+    "deliveryMethod": "bank"
+  }
+  ```
+
+#### DELETE Request (Delete Transfer by ID)
+
+- **Method**: `DELETE`
+- **URL**: `http://localhost:3000/api/v1/transfer/{id}`
+
+### Automated Testing
+
+To run automated tests, we recommend using **Supertest** and **Jest**.
+
+1. **Install Testing Dependencies**:
+
    ```bash
-   git checkout -b feature-name
+   npm install --save-dev jest supertest
    ```
-3. **Make your changes** and commit them:
+
+2. **Run Tests**:
    ```bash
-   git commit -m "Add feature-name"
+   npx jest
    ```
-4. **Push to your branch**:
-   ```bash
-   git push origin feature-name
-   ```
-5. **Open a pull request** to the `dev` branch and describe your changes.
+
+Test examples are defined in `transfer.test.js`.
 
 ---
 
 ## License
 
-ZimEasyPay is licensed under the [MIT License](LICENSE).
-
----
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
